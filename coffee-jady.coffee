@@ -61,7 +61,9 @@ Object.defineProperties Array.prototype,
 close_self = new Object
 
 jady = do ->
+	default_opts = require('./defaults')
 	(opts = {}) ->
+		opts = extend(opts, default_opts)
 		doctype = opts.doctype ? 'html'
 		indent_str = if typeof(opts.indent) == 'number' then ' '.repeat(opts.indent) else opts.indent ? '\t'
 
@@ -164,7 +166,7 @@ jady = do ->
 						indent -= 1
 						output.write '\n' + indent_str.repeat(indent) + end_tag
 					else
-						#log -> [begin_tag, end_tag, content]
+						log -> [begin_tag, end_tag, content]
 						output.write '\n' + indent_str.repeat(indent) + begin_tag + (if content? and content isnt close_self then content else '') + (end_tag ? '')
 
 			(label) ->
