@@ -1,7 +1,7 @@
 {
   "name": "coffee-jady",
-  "version": "0.1.0",
-  "description": "library for functional programming via coffeescript, lightweight & convenient",
+  "version": "0.2.0",
+  "description": "a html template engine like Jade but based on CoffeeScript",
   "author": "luochen1990",
   "license": "BSD",
   "homepage": "http://github.com/luochen1990/coffee-jady",
@@ -10,14 +10,14 @@
     "url": "git@github.com:luochen1990/coffee-jady.git"
   },
   "keywords": [
-    "functional programming",
-    "underscore",
+    "jade",
     "coffeescript",
-    "log macro",
-    "dict comprehension",
-    "sleep",
-    "random"
+    "html",
+    "template",
+    "lightweight",
   ],
   "main": "./coffee-jady.coffee",
-  "dependencies": {}
+  "dependencies": {
+	  "coffee-mate": "^0.6.0"
+  }
 }
