@@ -58,10 +58,12 @@ jady = do ->
 				else if type(attr.class) == 'string'
 					classes = classes.concat(attr.class.split(' '))
 				#log -> classes
+				if type(attr.style) == 'object'
+					attr.style = ("#{k}:#{v}" for k, v of attr.style).join(', ')
 				attr = Object.extend (id: (id ? attr.id), class: classes.join(' ') or null), attr
 				attrstr = ((if bool(v) then " #{snake(k)}" else " #{snake(k)}=\"#{v}\"") for k, v of attr when v? and (not bool(v)? or bool(v))).join('')
 
-				if not content? or self_closing(tag)
+				if self_closing(tag)
 					if opts.doctype == 'html'
 						["<#{tag}#{attrstr}>"]
 					else
@@ -91,10 +93,12 @@ jady = do ->
 						#log -> [begin_tag, content, end_tag]
 						write_line begin_tag + (content ? '') + (end_tag ? '')
 
-			(label) ->
-				curry (args..., content) ->
-					[begin_tag, end_tag] = extract_tag(label, args, content)
-					expand(begin_tag, content, end_tag)
+			(label, args..., content) ->
+				if type(content) == 'object'
+					args.push content
+					content = null
+				[begin_tag, end_tag] = extract_tag(label, args, content)
+				expand(begin_tag, content, end_tag)
 
 		Object.defineProperties j,
 			text:
@@ -122,33 +126,36 @@ if module? and require?.main == module
 	list_data = [1, 2]
 
 	html = jady(doctype: 'html', with_doctype: true) (j) ->
-		j('html') ->
-			j('head') ->
-				j('title') 'a coffee-jady demo'
-			j('body') ->
-				j('h1') 'this is a calculator'
-				j('div') ->
-					j('input#input-1.btn')(type: 'number', ngModel: 'input-value')()
-					j('input')(id: 'input-2', type: 'number')()
-					j('div') ->
-						j('button')(id: 'btn', class: 'red notice') 'calculate'
-						j('button')(id: 'btn', class: {blue: true, notice: false}) 'clear'
-				j('br')()
-				j('bbr') ''
+		j 'html', ->
+			j 'head', ->
+				j 'title', 'a coffee-jady demo'
+			j 'body', ->
+				j 'h1', 'this is a calculator'
+				j 'div', ngRepeat: 'x in ls', style: {width: '100px', height: '1em'}, ->
+					j 'input#input-1.btn', type: 'number', ngModel: 'input-value'
+					j 'input', id: 'input-2', type: 'number'
+					j 'div', ->
+						j 'button', id: 'btn', class: 'red notice', 'calculate'
+						j 'button', id: 'btn', class: {blue: true, notice: false}, 'clear'
+				j 'br'
+				j 'bbr'
+				j 'bbr', ''
+				j 'bbr', ->
 				for x in list_data
 					for y in list_data
-						j('label') "#{x}, #{y}"
+						j 'div', ->
+							j 'label', "#{x}, #{y}"
 				if false
-					j('label.if') 3
+					j 'label.if', 3
 				if true
-					j('label.if') 4
-					j('label.if') 5
+					j 'label.if', 4
+					j 'label.if', 5
 
 	console.log 'entire:\n' + (html) #.replace /\n/g, '$'
 
 	console.log 'fragment:\n' + jady() (j) ->
-		j('abc') ->
+		j 'abc', ->
 			j.raw '<hi>'
-			j('br')()
+			j 'br'
 			j.text '<hello>'
 
