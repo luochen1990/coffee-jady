@@ -14,7 +14,7 @@
     "coffeescript",
     "html",
     "template",
-    "lightweight",
+    "lightweight"
   ],
   "main": "./coffee-jady.coffee",
   "dependencies": {
